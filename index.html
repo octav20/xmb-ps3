@@ -6,13 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XMB-PS3</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="assets/icons/logotipo-de-playstation.png" type="image/x-icon">
 </head>
 
 <body>
     <div id="start-screen">
-        <button id="start-button">Start</button>
+        <a id="start-button" href="#" class="ps3-button">
+            <img src="assets/icons/logotipo-de-playstation.png" alt="Icono de PlayStation 3" class="ps3-icon">
+            <span class="button-text">START</span>
+        </a>
     </div>
-    <div id="page-overlay"></div>
+    <div id="page-overlay">
+        <!-- PS3  text-->
+        <div id="ps3-logo1" class="ps3-logo-position">
+
+            <div class="ps3-logo-text">
+                <img class="ps3-logo-icon" src="/assets/icons/logotipo-de-playstation.png" alt="">
+
+                PS3
+
+            </div>
+            <span class="ps3-text">
+                PlayStation&#174; 3
+            </span>
+        </div>
+
+    </div>
     <canvas id="bg"></canvas>
 
     <div class="status-bar bg-status">
@@ -23,7 +42,7 @@
             Active sub menu item index: <span id="active-sub-menu-item-index-display"></span>
         </p>
     </div>
-    <div class="main-container">
+    <div id="main-content" class="main-container">
 
         <div class="menu-container">
             <div class="menu-item">

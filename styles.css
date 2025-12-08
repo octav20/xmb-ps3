@@ -1,8 +1,14 @@
 /* import font desde mis assets */
 @font-face {
   font-family: 'CustomFont';
-  src: url('assets/fonts/font.ttf') format('truetype');
+  src: url('assets/fonts/SCE-PS3-RD-B-LATIN2.TTF') format('truetype');
   font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ps3-logo';
+  src: url('assets/fonts/logo-font.otf') format('truetype');
+  font-weight: bold;
   font-style: normal;
 }
 
@@ -10,6 +16,65 @@ body {
   font-family: 'CustomFont', sans-serif;
   overflow: hidden;
 }
+.ps3-button {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; /* Centrar horizontalmente */
+    justify-content: center; /* Centrar verticalmente */
+    
+    width: 150px; /* Ancho típico para un ícono de menú */
+    height: 150px;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
+    
+    /* Fondo y estética XMB */
+    background: linear-gradient(to bottom, #101010, #000000);
+    text-decoration: none; /* Quitar el subrayado de los enlaces */
+    
+    /* Efecto Neón Azul */
+    box-shadow: 
+        0 0 10px rgba(180, 78, 78, 0.7),
+        inset 0 1px 3px rgba(209, 5, 5, 0.1);
+    
+}
+
+/* 2. Estilo de la Imagen (el ícono) */
+.ps3-icon {
+    width: 80px; /* Tamaño del ícono dentro del botón */
+    height: 80px;
+    object-fit: contain; /* Asegura que la imagen no se distorsione */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Sombra para resaltar la imagen */
+}
+
+/* 3. Estilo del Texto (si lo incluyes) */
+.button-text {
+    margin-top: 8px;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* 4. Efectos Interactivos (Hover/Active) */
+.ps3-button:hover {
+    background: linear-gradient(to bottom, #202020, #000000);
+    /* red */
+
+    box-shadow: 
+        0 0 20px rgb(216, 91, 89),
+        inset 0 1px 5px rgba(233, 4, 4, 0.2);
+    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
+}
+
+.ps3-button:active {
+    transform: scale(1);
+    box-shadow: 
+        0 0 5px rgba(158, 51, 51, 0.5),
+        inset 0 1px 5px rgba(204, 71, 71, 0.5); 
+}
+
 
 #start-screen {
   position: fixed;
@@ -26,39 +91,73 @@ body {
 }
 /* Paso 1: Configurar el Overlay Negro 
 */
+.ps3-logo-position {
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+}
+.ps3-logo-icon {
+  padding-bottom: 10px;
+  width: 70px;
+  height: 70px;
+  /* invertir color */
+  filter: invert(1);
+}
+.ps3-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+
+  font-family: 'ps3-logo', sans-serif;
+  font-size: 4em;
+}
+.ps3-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+}
+.slidefromleft {
+  /* Propiedades de la animación: */
+  animation-name: slideFromLeft; /* Nombre de la animación (@keyframes) */
+  animation-duration: 4s; /* Duración total de la animación: 1.5 segundos */
+  animation-timing-function: ease-in-out; /* Velocidad: inicia rápido y se desacelera al final */
+  animation-fill-mode: forwards; /* Mantiene el estado final (100%) al terminar */
+}
+@keyframes slideFromLeft {
+  /* Estado Inicial: 0% de la duración de la animación */
+  0% {
+    opacity: 0;
+  }
+
+  /* Estado Final: 100% de la duración de la animación */
+  100% {
+    opacity: 1;
+  }
+}
 #page-overlay {
-    /* Cubre toda la ventana de navegación (viewport) */
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    /* El color oscuro inicial (negro) */
-    background-color: #000000; 
-    
-    /* Asegura que esté por encima de todo el contenido de la página */
-    z-index: 9999; 
-    
-    /* La opacidad inicial es 1 (completamente visible/opaco) */
-    opacity: 0.8; 
-    
-    /* Define la animación: 
-        Transiciona la propiedad 'opacity' durante 1 segundo (1000ms) 
-        con una curva de aceleración suave (ease-out).
-    */
-    transition: opacity 10s ease-out;
-      animation-duration: 10s;
-  /* animation-iteration-count: 3; */
+  /* Cubre toda la ventana de navegación (viewport) */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: #000000;
+
+  z-index: 9999;
+
+  opacity: 0.8;
+
+  transition: opacity 10s ease-out;
+  animation-duration: 10s;
   animation-iteration-count: 1;
   animation-timing-function: ease-in-out;
 }
-
-/* Paso 2: Clase para Ocultar el Overlay 
-*/
-/* Esta clase será agregada con JavaScript para iniciar el desvanecimiento */
-
-
 .fade-out {
   animation-name: fade-out;
 }
@@ -73,11 +172,10 @@ body {
   }
 }
 
-
-
 .main-container {
   height: 100vh;
-  display: flex;
+  display: none;
+
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -108,7 +206,6 @@ body {
   transition: transform 0.2s ease-in;
 }
 
-
 .menu-item-header {
   position: absolute;
   top: 10%;
@@ -129,8 +226,6 @@ body {
 .menu-item-description {
   display: none;
 }
-
-
 
 .sub-menu-item-icon {
   display: flex;

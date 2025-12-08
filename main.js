@@ -65,6 +65,7 @@ function addBodyListener() {
       await moveMenuItemsHorizontally(direction);
     } else if (event.key === 'ArrowRight') {
       direction = DIRECTION.Right;
+      await moveMenuItemsHorizontally(direction);
     } else if (event.key === 'ArrowUp') {
       direction = DIRECTION.Up;
       await moveSubMenuItemsVertically(direction);
@@ -354,15 +355,9 @@ function setupActiveSubMenuItems() {
   });
 }
 
-window.onload = () => {
-  buildMenuItemsData();
-  addBodyListener();
-  setupActiveMenuItem();
-  setupActiveSubMenuItems();
-};
-
 document.addEventListener('DOMContentLoaded', function () {
   const startButton = document.getElementById('start-button');
+  const ps3Logo = document.getElementById('ps3-logo1');
 
   const overlay = document.getElementById('page-overlay');
 
@@ -372,14 +367,18 @@ document.addEventListener('DOMContentLoaded', function () {
       Sfx.playIntro();
       // 2. INICIAR LA ANIMACIÓN: Agrega la clase 'fade-out'
       overlay.classList.add('fade-out');
+      ps3Logo.classList.add('slidefromleft');
 
       // Opcional: Ocultar el botón y el texto de bienvenida
       document.getElementById('start-screen').style.display = 'none';
 
-      // 3. Eliminar el overlay después de que la animación termine (3 segundos)
-      // Asegúrate de que el tiempo (3000ms) coincida con la duración en CSS.
       setTimeout(() => {
         overlay.remove();
+        document.querySelector('.main-container').style.display = 'flex';
+        buildMenuItemsData();
+        addBodyListener();
+        setupActiveMenuItem();
+        setupActiveSubMenuItems();
       }, 9900);
     });
   } else {
