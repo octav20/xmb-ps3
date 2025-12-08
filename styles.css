@@ -1,0 +1,228 @@
+/* import font desde mis assets */
+@font-face {
+  font-family: 'CustomFont';
+  src: url('assets/fonts/font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'CustomFont', sans-serif;
+  overflow: hidden;
+}
+
+.main-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 0 20px;
+}
+
+.menu-container {
+  position: absolute;
+  top: 15vh;
+  left: 12vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  height: 600px;
+  transition: transform 0.2s ease-in;
+}
+
+
+.menu-item-header {
+  position: absolute;
+  top: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-item-icon {
+  width: 100px;
+  height: 100px;
+  opacity: 0.5;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+  animation-play-state: paused;
+}
+
+.menu-item-description {
+  display: none;
+}
+
+
+
+.sub-menu-item-icon {
+  display: flex;
+  width: 100px;
+  height: 100px;
+  opacity: 0.5;
+  transition: transform 0.4s ease;
+  padding-left: 10px;
+}
+
+.sub-menu-item-header {
+  transition: transform 0.4s ease;
+  animation-play-state: paused;
+  opacity: 0.5;
+  /* margin-left: 50px;
+     */
+}
+
+.sub-menu-item-container {
+  position: absolute;
+  /* QUITAMOS 'display: none' y usamos opacidad y transformación */
+  display: flex; /* Se mantiene en el DOM, pero invisible y desplazado */
+  left: 10%;
+  top: 30%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* ESTADO INICIAL OCULTO CON TRASLACIÓN HORIZONTAL Y OPACIDAD 0 */
+  opacity: 0;
+  transform: translateX(-50px); /* Oculto y movido 50px a la izquierda */
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* Transición para el contenedor */
+}
+
+/* ... Tu código anterior ... */
+
+.sub-menu-item {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  width: 400px;
+  height: 120px;
+  margin: 5px;
+
+  /* TRASLACIÓN ADICIONAL PARA CADA SUB-MENÚ */
+  transform: translateX(-20px);
+  transition: transform 300ms ease-in, opacity 300ms ease-in; /* Añadida transición de opacidad */
+  opacity: 0; /* Inicialmente ocultos */
+}
+
+/* Active Menu Item */
+
+.active-menu-item {
+} /* Just for mark active menu item*/
+
+.active-menu-item .sub-menu-item-container {
+  /* ESTADO VISIBLE: Vuelve a la posición normal y aparece */
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.active-menu-item .sub-menu-item {
+  /* Estado visible para los elementos internos */
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* OPCIONAL: Añadir un retraso escalonado para los sub-menú items */
+.active-menu-item .sub-menu-item:nth-child(1) {
+  transition-delay: 0.1s;
+}
+.active-menu-item .sub-menu-item:nth-child(2) {
+  transition-delay: 0.2s;
+}
+.active-menu-item .sub-menu-item:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.active-menu-item .menu-item-icon {
+  opacity: 1;
+  /* transform: scale(1.2); */
+}
+
+.active-menu-item .menu-item-description {
+  display: block;
+}
+
+.active-menu-item .sub-menu-item-container {
+  display: flex;
+}
+/* END - Active Menu Item*/
+
+/* Active Sub Menu Item*/
+
+.active-sub-menu-item {
+} /* Just for mark active sub menu item*/
+
+.active-sub-menu-item .sub-menu-item-icon {
+  opacity: 1;
+  /* transform: scale(1.5); */
+}
+
+.active-sub-menu-item .sub-menu-item-header {
+  animation: signal 2s infinite;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: running;
+  opacity: 1;
+}
+/* END - Active Sub Menu Item*/
+
+/* STATUS BAR */
+
+.status-bar {
+  display: none;
+  position: fixed;
+  width: 100%;
+  color: white;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+}
+
+.bg-status {
+  background-color: black;
+  opacity: 0.4;
+}
+
+/* END - STATUS BAR */
+
+@keyframes signal {
+  0% {
+    text-shadow: 0px 0px 20px rgba(255, 255, 255, 0),
+      0px 0px 20px rgba(255, 255, 255, 0), 0px 0px 20px rgba(255, 255, 255, 0);
+  }
+
+  25% {
+    text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5),
+      0px 0px 20px rgba(255, 255, 255, 0.5),
+      0px 0px 20px rgba(255, 255, 255, 0.5);
+  }
+
+  50% {
+    text-shadow: 0px 0px 20px rgba(255, 255, 255, 1),
+      0px 0px 20px rgba(255, 255, 255, 1), 0px 0px 20px rgba(255, 255, 255, 1);
+  }
+
+  75% {
+    text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5),
+      0px 0px 20px rgba(255, 255, 255, 0.5),
+      0px 0px 20px rgba(255, 255, 255, 0.5);
+  }
+
+  100% {
+    text-shadow: 0px 0px 20px rgba(255, 255, 255, 0),
+      0px 0px 20px rgba(255, 255, 255, 0), 0px 0px 20px rgba(255, 255, 255, 0);
+  }
+}
