@@ -375,10 +375,76 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => {
         overlay.remove();
         document.querySelector('.main-container').style.display = 'flex';
+        document.querySelector('.main-container').classList.add('fade-in');
+
+        document.querySelector('.ps3-status-bar').style.display = 'flex';
+        document.querySelector('.ps3-status-bar').classList.add('fade-in');
         buildMenuItemsData();
         addBodyListener();
         setupActiveMenuItem();
         setupActiveSubMenuItems();
+        function updateClock() {
+          const now = new Date();
+
+          const hours = now.getHours() % 12;
+          const minutes = now.getMinutes();
+          const seconds = now.getSeconds();
+
+          const hourDeg = (hours + minutes / 60 + seconds / 3600) * 30;
+
+          const minuteDeg = (minutes + seconds / 60) * 6;
+
+          document
+            .getElementById('hourHand')
+            .setAttribute('transform', `rotate(${hourDeg} 50 50)`);
+
+          document
+            .getElementById('minuteHand')
+            .setAttribute('transform', `rotate(${minuteDeg} 50 50)`);
+
+          // Texto tipo "12/12 9:39 PM"
+          document.getElementById('timeText').textContent =
+            now.toLocaleDateString('en-US', {
+              month: '2-digit',
+              day: '2-digit',
+            }) +
+            ' ' +
+            now.toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: '2-digit',
+            });
+        }
+
+        updateClock();
+        setInterval(updateClock, 60000);
+
+        // function updateClock() {
+        //   const now = new Date();
+
+        //   const hours = now.getHours() % 12;
+        //   const minutes = now.getMinutes();
+
+        //   const hourDeg = (hours + minutes / 60) * 30;
+        //   const minuteDeg = minutes * 6;
+
+        //   document.querySelector(
+        //     '.hour'
+        //   ).style.transform = `rotate(${hourDeg}deg)`;
+
+        //   document.querySelector(
+        //     '.minute'
+        //   ).style.transform = `rotate(${minuteDeg}deg)`;
+
+        //   // Texto tipo "9:39 PM"
+        //   document.getElementById('timeText').textContent =
+        //     now.toLocaleTimeString('en-US', {
+        //       hour: 'numeric',
+        //       minute: '2-digit',
+        //     });
+        // }
+
+        // updateClock();
+        // setInterval(updateClock, 1000);
       }, 9900);
     });
   } else {

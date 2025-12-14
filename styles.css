@@ -1,7 +1,6 @@
-/* import font desde mis assets */
 @font-face {
   font-family: 'CustomFont';
-  src: url('assets/fonts/SCE-PS3-RD-B-LATIN2.TTF') format('truetype');
+  src: url('assets/fonts/font.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,8 +13,19 @@
 
 body {
   font-family: 'CustomFont', sans-serif;
-  overflow: hidden;
+   margin: 0;
+        padding: 0;
+        overflow: hidden;
 }
+ #bg {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
 .ps3-button {
     display: flex;
     flex-direction: column; 
@@ -39,15 +49,13 @@ body {
     
 }
 
-/* 2. Estilo de la Imagen (el ícono) */
 .ps3-icon {
-    width: 80px; /* Tamaño del ícono dentro del botón */
+    width: 80px; 
     height: 80px;
-    object-fit: contain; /* Asegura que la imagen no se distorsione */
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Sombra para resaltar la imagen */
+    object-fit: contain; 
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); 
 }
 
-/* 3. Estilo del Texto (si lo incluyes) */
 .button-text {
     margin-top: 8px;
     color: #ffffff;
@@ -57,15 +65,13 @@ body {
     font-weight: bold;
 }
 
-/* 4. Efectos Interactivos (Hover/Active) */
 .ps3-button:hover {
     background: linear-gradient(to bottom, #202020, #000000);
-    /* red */
 
     box-shadow: 
         0 0 20px rgb(216, 91, 89),
         inset 0 1px 5px rgba(233, 4, 4, 0.2);
-    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
+    transform: scale(1.05); 
 }
 
 .ps3-button:active {
@@ -74,6 +80,70 @@ body {
         0 0 5px rgba(158, 51, 51, 0.5),
         inset 0 1px 5px rgba(204, 71, 71, 0.5); 
 }
+
+.ps3-status-bar {
+  padding: 2px;
+  position: fixed;
+  top: 5%;
+  right: 0;
+  width: 30dvw;
+  height: 7dvh;
+  background-color: rgb(0, 0, 0, 0.2); 
+  opacity: 0.8; 
+  border: white 1px solid; 
+  box-shadow: 
+    inset 0 0 1px white,
+    0 0 2px white, 
+    0 0 2px white,   
+    0 0 2px white;   
+    
+  display: none;
+  border-top-left-radius: 0.2rem;
+  border-bottom-left-radius: 0.2rem;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+     transition: opacity 2s ease-out;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+}
+.clock-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-family: 'CustomFont', sans-serif;
+}
+
+.clock { 
+  width: 30px;
+  height: 30px;
+}
+
+.clock-face {
+  fill: none;
+  stroke: rgba(255, 255, 255);
+  stroke-width: 10;
+}
+
+#line, #hourHand, #minuteHand {
+  stroke: white;
+  stroke-linecap: round;
+}
+
+#hourHand {
+  stroke-width: 9;
+}
+
+#minuteHand {
+  stroke-width: 9;
+}
+
+.clock-center {
+  fill: white;
+}
+
 
 
 #start-screen {
@@ -87,10 +157,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10000; /* Asegura que esté por encima de todo */
+  z-index: 10000; 
 }
-/* Paso 1: Configurar el Overlay Negro 
-*/
 .ps3-logo-position {
   position: absolute;
   top: 50%;
@@ -162,6 +230,10 @@ body {
   animation-name: fade-out;
 }
 
+.fade-in {
+  animation-name: fade-in;
+}
+
 @keyframes fade-out {
   from {
     opacity: 0.8;
@@ -170,6 +242,17 @@ body {
   to {
     opacity: 0;
   }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+  
 }
 
 .main-container {
@@ -181,6 +264,10 @@ body {
   text-align: center;
   color: #fff;
   padding: 0 20px;
+   transition: opacity 2s ease-out;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
 }
 
 .menu-container {
