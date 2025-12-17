@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         updateClock();
         setInterval(updateClock, 60000);
-      }, 900);
+      }, 10000);
     });
   } else {
     console.error('No se encontró el botón de inicio o el overlay.');
