@@ -8,9 +8,10 @@ export function debugOverlay({ element, toggleKey = 't', visible = false }) {
     element.hidden = !visible;
 
     const render = () => {
-      const { categoryIndex, itemIndex, optionIndex, category, item } = engine.model.snapshot();
+      const { categoryIndex, itemIndex, optionIndex, category, item, path } = engine.model.snapshot();
       const rows = [
         ['Category', `${categoryIndex} (${category.id})`],
+        ['Path', path.length ? path.map((folder) => folder.label).join(' › ') : '—'],
         ['Item', item ? `${itemIndex} (${item.id})` : '—'],
         ['Option', optionIndex === -1 ? '—' : String(optionIndex)],
       ];

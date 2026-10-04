@@ -175,17 +175,19 @@ body {
 
 /* ---------- Status bar ---------- */
 
+/* Lives inside the 1920×1080 stage, so sizes are design pixels. */
 .status-bar {
-  position: fixed;
-  top: 5%;
+  position: absolute;
+  top: 54px;
   right: 0;
   z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30dvw;
-  height: 7dvh;
+  width: 576px;
+  height: 76px;
   padding: 2px;
+  font-size: 22px;
   background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid #fff;
   border-right: 0;
@@ -198,13 +200,13 @@ body {
 .clock-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: #fff;
 }
 
 .clock {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
 }
 
 .clock__face {

@@ -31,11 +31,12 @@ export class XmbEngine {
    * @param {number} [options.settleDelay] ms before an item is considered "settled".
    * @param {Record<string, string>} [options.keymap]
    * @param {number} [options.repeatInterval]
+   * @param {string} [options.emptyLabel] text shown in an empty folder.
    */
-  constructor({ root, categories, initialCategory = 0, settleDelay = 1000, keymap, repeatInterval }) {
+  constructor({ root, categories, initialCategory = 0, settleDelay = 1000, keymap, repeatInterval, emptyLabel }) {
     this.settleDelay = settleDelay;
     this.model = new XmbModel(categories, { initialCategory });
-    this.view = new XmbView(root, this.model);
+    this.view = new XmbView(root, this.model, { emptyLabel });
     this.#input = new KeyboardInput((action) => this.dispatch(action), { keymap, repeatInterval });
 
     this.#cleanups.push(
@@ -78,7 +79,7 @@ export class XmbEngine {
     let changed;
     switch (action) {
       case ACTIONS.LEFT:
-        changed = model.optionsOpen ? model.closeOptions() : model.moveCategory(-1);
+        changed = model.back() || model.moveCategory(-1);
         break;
       case ACTIONS.RIGHT:
         changed = model.moveCategory(1);

@@ -10,7 +10,8 @@ const CLOCK_SVG = `
 
 /**
  * Status-bar clock (date, time and analog hands), updated every second and
- * aligned to the wall clock.
+ * aligned to the wall clock. Emit `clock` with `{date?, time?}` Intl options
+ * to change the format at runtime.
  *
  * @param {object} options
  * @param {HTMLElement} options.element
@@ -24,14 +25,14 @@ export function clock({
   dateFormat = { month: '2-digit', day: '2-digit' },
   timeFormat = { hour: 'numeric', minute: '2-digit' },
 }) {
-  return () => {
+  return (engine) => {
     element.innerHTML = `<time class="clock__text"></time>${CLOCK_SVG}`;
     const text = element.querySelector('.clock__text');
     const [hour, minute, second] = ['hour', 'minute', 'second'].map((unit) =>
       element.querySelector(`.clock__hand--${unit}`)
     );
-    const date = new Intl.DateTimeFormat(locale, dateFormat);
-    const time = new Intl.DateTimeFormat(locale, timeFormat);
+    let date = new Intl.DateTimeFormat(locale, dateFormat);
+    let time = new Intl.DateTimeFormat(locale, timeFormat);
     let timer = 0;
 
     const rotate = (hand, degrees) => hand.setAttribute('transform', `rotate(${degrees} 50 50)`);
@@ -51,8 +52,16 @@ export function clock({
       timer = setTimeout(tick, 1000 - now.getMilliseconds());
     };
 
+    const offFormat = engine.on('clock', ({ date: nextDate, time: nextTime } = {}) => {
+      if (nextDate) date = new Intl.DateTimeFormat(locale, { ...dateFormat, ...nextDate });
+      if (nextTime) time = new Intl.DateTimeFormat(locale, { ...timeFormat, ...nextTime });
+      clearTimeout(timer);
+      tick();
+    });
+
     tick();
     return () => {
+      offFormat();
       clearTimeout(timer);
       element.replaceChildren();
     };

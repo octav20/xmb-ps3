@@ -1,32 +1,55 @@
 /*
  * XMB engine styles.
- * All geometry is expressed through custom properties so a host app can
- * re-skin or re-scale the menu by overriding them on `.xmb` (or any ancestor).
- * JS only sets `--xmb-category` on the root and `--rel` / `--depth` on items.
+ * Geometry is expressed in design pixels of a 1920×1080 surface (see Stage.js)
+ * through custom properties, so a host app can re-skin or re-scale the menu by
+ * overriding them on `.xmb` (or any ancestor).
+ * JS only sets `--xmb-category` / `--xmb-level` on the root and `--rel` /
+ * `--depth` on items.
  */
 
+/* ---------- 16:9 stage ---------- */
+
+.xmb-stage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: var(--xmb-stage-w, 1920px);
+  height: var(--xmb-stage-h, 1080px);
+  transform: translate(-50%, -50%) scale(var(--xmb-scale, 1));
+  transform-origin: center;
+  pointer-events: none;
+}
+
+/* ---------- Root ---------- */
+
 .xmb {
-  --xmb-cat-w: clamp(104px, 10.5vw, 180px);
-  --xmb-cat-icon: clamp(60px, 6vw, 100px);
-  --xmb-label-h: 2rem;
+  --xmb-cat-w: 200px;
+  --xmb-cat-icon: 112px;
+  --xmb-label-h: 38px;
   --xmb-header-h: calc(var(--xmb-cat-icon) + var(--xmb-label-h));
-  --xmb-item-h: clamp(68px, 11vh, 120px);
-  --xmb-item-icon: clamp(54px, 5.6vw, 96px);
+  --xmb-item-h: 118px;
+  --xmb-item-icon: 106px;
   --xmb-focus-gap: calc(var(--xmb-item-h) * 0.25);
-  --xmb-row-top: 26vh;
-  --xmb-row-left: 16vw;
+  --xmb-level-w: 220px;
+  --xmb-row-top: 280px;
+  --xmb-row-left: 300px;
+  --xmb-font-category: 21px;
+  --xmb-font-label: 29px;
+  --xmb-font-description: 18px;
   --xmb-color: #fff;
   --xmb-dim: 0.5;
+  --xmb-path-dim: 0.65;
   --xmb-glow: rgba(255, 255, 255, 0.9);
+  --xmb-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
   --xmb-duration: 240ms;
   --xmb-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
   --xmb-stagger: 40ms;
 
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 2;
-  overflow: hidden;
   color: var(--xmb-color);
+  text-shadow: var(--xmb-text-shadow);
   pointer-events: none;
 }
 
@@ -37,7 +60,9 @@
   top: var(--xmb-row-top);
   left: var(--xmb-row-left);
   display: flex;
-  transform: translateX(calc(var(--xmb-cat-w) * var(--xmb-category, 0) * -1));
+  transform: translateX(
+    calc(var(--xmb-cat-w) * var(--xmb-category, 0) * -1 - var(--xmb-level-w) * var(--xmb-level, 0))
+  );
   transition: transform var(--xmb-duration) var(--xmb-ease), opacity var(--xmb-duration) ease;
 }
 
@@ -51,6 +76,7 @@
   flex-direction: column;
   align-items: center;
   height: var(--xmb-header-h);
+  transition: opacity var(--xmb-duration) ease;
 }
 
 .xmb-category__icon {
@@ -65,7 +91,7 @@
 
 .xmb-category__label {
   line-height: var(--xmb-label-h);
-  font-size: clamp(0.85rem, 1.1vw, 1.15rem);
+  font-size: var(--xmb-font-category);
   white-space: nowrap;
   opacity: 0;
   transition: opacity var(--xmb-duration) ease;
@@ -80,18 +106,30 @@
   opacity: 1;
 }
 
-/* ---------- Vertical item column ---------- */
+/* Inside a folder the category row gives way to the folder path. */
+.xmb.is-nested .xmb-category__header {
+  opacity: 0;
+}
 
-.xmb-category__items {
+/* ---------- Item columns (category root + folder levels) ---------- */
+
+.xmb-category__items,
+.xmb-category__levels {
   position: absolute;
   top: var(--xmb-header-h);
   left: calc(50% - var(--xmb-item-icon) / 2);
+}
+
+.xmb-column {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.xmb-category__items {
   opacity: 0;
   visibility: hidden;
-  transform: translateX(-2rem);
+  transform: translateX(-32px);
   transition: opacity var(--xmb-duration) ease, transform var(--xmb-duration) var(--xmb-ease),
     visibility 0s linear var(--xmb-duration);
 }
@@ -103,6 +141,19 @@
   transition-delay: 0s;
 }
 
+.xmb-level {
+  position: absolute;
+  top: 0;
+  left: calc(var(--n) * var(--xmb-level-w));
+  animation: xmb-level-in var(--xmb-duration) var(--xmb-ease);
+  transition: opacity var(--xmb-duration) ease, transform var(--xmb-duration) var(--xmb-ease);
+}
+
+.xmb-level.is-leaving {
+  opacity: 0;
+  transform: translateX(48px);
+}
+
 .xmb-item {
   --rel: 0;
   --depth: 0;
@@ -111,7 +162,7 @@
   left: 0;
   display: flex;
   align-items: center;
-  gap: clamp(0.75rem, 1.4vw, 1.5rem);
+  gap: 27px;
   height: var(--xmb-item-h);
   width: max-content;
   opacity: 0;
@@ -124,14 +175,34 @@
   transform: translateY(calc(var(--rel) * var(--xmb-item-h) + var(--xmb-focus-gap)));
 }
 
-.xmb-item.is-before {
+/* Root items above the focused one are lifted over the category row. */
+.xmb-category__items .xmb-item.is-before {
   transform: translateY(
     calc(var(--rel) * var(--xmb-item-h) - var(--xmb-header-h) - var(--xmb-focus-gap))
   );
 }
 
+/* Folder levels have no category header, so only the focus gap applies. */
+.xmb-level .xmb-item.is-before {
+  transform: translateY(calc(var(--rel) * var(--xmb-item-h) - var(--xmb-focus-gap)));
+}
+
 .xmb-category.is-active .xmb-item {
   opacity: 1;
+}
+
+/* Ancestor columns keep only the folder that was opened, as a path marker. */
+.xmb-column.is-ancestor .xmb-item:not(.is-focused),
+.xmb-column.is-ancestor:not(.is-parent) {
+  opacity: 0;
+}
+
+.xmb-column.is-ancestor .xmb-item__text {
+  opacity: 0;
+}
+
+.xmb-column.is-ancestor .xmb-item.is-focused .xmb-item__icon {
+  opacity: var(--xmb-path-dim);
 }
 
 .xmb-item__icon {
@@ -148,19 +219,20 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
+  gap: 4px;
   text-align: left;
+  transition: opacity var(--xmb-duration) ease;
 }
 
 .xmb-item__label {
-  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  font-size: var(--xmb-font-label);
   white-space: nowrap;
   opacity: var(--xmb-dim);
   transition: opacity var(--xmb-duration) ease;
 }
 
 .xmb-item__description {
-  font-size: clamp(0.75rem, 0.95vw, 0.95rem);
+  font-size: var(--xmb-font-description);
   white-space: nowrap;
   opacity: 0;
   transition: opacity var(--xmb-duration) ease;
@@ -171,7 +243,7 @@
   opacity: 1;
 }
 
-.xmb-item.is-focused .xmb-item__label {
+.xmb-column.is-current .xmb-item.is-focused .xmb-item__label {
   animation: xmb-signal 2s linear infinite;
 }
 
@@ -179,11 +251,24 @@
   opacity: 0.85;
 }
 
+.xmb-item.is-loading .xmb-item__icon {
+  animation: xmb-pulse 900ms ease-in-out infinite;
+}
+
+.xmb-level__empty {
+  display: flex;
+  align-items: center;
+  height: var(--xmb-item-h);
+  white-space: nowrap;
+  font-size: var(--xmb-font-label);
+  opacity: 0.8;
+}
+
 /* Settled item with a `focusIcon` (e.g. a game logo replacing the disc). */
 .xmb-item.is-featured .xmb-item__icon {
   width: auto;
-  max-width: 40vw;
-  padding-inline: clamp(1rem, 3vw, 3rem);
+  max-width: 760px;
+  padding-inline: 48px;
   animation: xmb-fade-in 600ms ease;
 }
 
@@ -195,16 +280,19 @@
   right: 0;
   display: flex;
   align-items: center;
-  width: min(34vw, 440px);
+  width: 520px;
   height: 100%;
   background: linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.7));
   border-left: 1px solid rgba(255, 255, 255, 0.25);
+  visibility: hidden;
   transform: translateX(100%);
-  transition: transform var(--xmb-duration) var(--xmb-ease);
+  transition: transform var(--xmb-duration) var(--xmb-ease), visibility 0s linear var(--xmb-duration);
 }
 
 .xmb.has-options .xmb-options {
+  visibility: visible;
   transform: translateX(0);
+  transition-delay: 0s;
 }
 
 .xmb.has-options .xmb__track {
@@ -214,14 +302,14 @@
 .xmb-options__list {
   width: 100%;
   margin: 0;
-  padding: 0 2rem;
+  padding: 0 38px;
   list-style: none;
 }
 
 .xmb-option {
   position: relative;
-  padding: 0.7rem 0 0.7rem 1.6rem;
-  font-size: clamp(0.95rem, 1.3vw, 1.3rem);
+  padding: 13px 0 13px 30px;
+  font-size: 25px;
   opacity: var(--xmb-dim);
 }
 
@@ -230,8 +318,8 @@
   position: absolute;
   left: 0;
   top: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: currentColor;
   transform: translateY(-50%);
@@ -247,10 +335,11 @@
 @keyframes xmb-signal {
   0%,
   100% {
-    text-shadow: 0 0 4px transparent, 0 0 10px transparent, 0 0 20px transparent;
+    text-shadow: var(--xmb-text-shadow), 0 0 4px transparent, 0 0 10px transparent, 0 0 20px transparent;
   }
   50% {
-    text-shadow: 0 0 4px var(--xmb-glow), 0 0 10px var(--xmb-glow), 0 0 20px var(--xmb-glow);
+    text-shadow: var(--xmb-text-shadow), 0 0 4px var(--xmb-glow), 0 0 10px var(--xmb-glow),
+      0 0 20px var(--xmb-glow);
   }
 }
 
@@ -260,15 +349,30 @@
   }
 }
 
+@keyframes xmb-level-in {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+}
+
+@keyframes xmb-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .xmb {
     --xmb-duration: 0ms;
     --xmb-stagger: 0ms;
   }
 
-  .xmb-item.is-focused .xmb-item__label,
+  .xmb-column.is-current .xmb-item.is-focused .xmb-item__label,
   .xmb-option.is-focused,
-  .xmb-item.is-featured .xmb-item__icon {
+  .xmb-item.is-featured .xmb-item__icon,
+  .xmb-item.is-loading .xmb-item__icon,
+  .xmb-level {
     animation: none;
   }
 }

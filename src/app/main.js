@@ -1,4 +1,4 @@
-import { XmbEngine } from '../engine/index.js';
+import { fitStage, XmbEngine } from '../engine/index.js';
 import {
   AudioManager,
   audio,
@@ -12,6 +12,8 @@ import { runBootSequence } from './boot.js';
 import { categories, defaultTheme, sounds, themes, timing } from './config.js';
 
 const $ = (selector) => document.querySelector(selector);
+
+fitStage($('#stage'));
 
 const sound = new AudioManager();
 

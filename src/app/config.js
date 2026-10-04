@@ -61,16 +61,53 @@ export const categories = [
     icon: `${ICONS}/setting.png`,
     items: [
       {
-        id: 'theme',
-        label: 'Theme',
-        description: 'Change the background color',
+        id: 'theme-settings',
+        label: 'Theme Settings',
         icon: `${ICONS}/change-theme.png`,
-        options: Object.entries(themes).map(([value, theme]) => ({
-          label: theme.label,
-          value,
-          selected: value === defaultTheme,
-        })),
-        onSelect: ({ engine, option }) => engine.emit('theme', option.value),
+        items: [
+          {
+            id: 'theme-color',
+            label: 'Color',
+            description: 'Change the background color',
+            icon: `${ICONS}/change-theme.png`,
+            options: Object.entries(themes).map(([value, theme]) => ({
+              label: theme.label,
+              value,
+              selected: value === defaultTheme,
+            })),
+            onSelect: ({ engine, option }) => engine.emit('theme', option.value),
+          },
+        ],
+      },
+      {
+        id: 'system-settings',
+        label: 'System Settings',
+        icon: `${ICONS}/setting.png`,
+        items: [
+          {
+            id: 'language',
+            label: 'Language',
+            icon: `${ICONS}/setting.png`,
+            options: [{ label: 'English', selected: true }, { label: 'Español' }],
+          },
+          {
+            id: 'date-time-settings',
+            label: 'Date and Time Settings',
+            icon: `${ICONS}/setting.png`,
+            items: [
+              {
+                id: 'time-format',
+                label: 'Time Format',
+                icon: `${ICONS}/setting.png`,
+                options: [
+                  { label: '12-Hour Clock', value: true, selected: true },
+                  { label: '24-Hour Clock', value: false },
+                ],
+                onSelect: ({ engine, option }) => engine.emit('clock', { time: { hour12: option.value } }),
+              },
+            ],
+          },
+        ],
       },
       { id: 'users', label: 'Users', icon: `${ICONS}/menu_user.png` },
       {
@@ -91,13 +128,34 @@ export const categories = [
     id: 'music',
     label: 'Music',
     icon: `${ICONS}/music.png`,
-    items: [{ label: 'All Gone', description: 'The Last of Us', icon: `${ICONS}/music.png` }],
+    items: [
+      {
+        label: 'Playlists',
+        icon: `${ICONS}/music.png`,
+        items: [{ label: 'All Gone', description: 'The Last of Us', icon: `${ICONS}/music.png` }],
+      },
+      { label: 'Downloads', icon: `${ICONS}/music.png`, items: [] },
+    ],
   },
   {
     id: 'video',
     label: 'Video',
     icon: `${ICONS}/movie.png`,
-    items: [{ label: 'Videos', icon: `${ICONS}/movie.png` }],
+    items: [
+      {
+        label: 'Library',
+        description: 'Loaded on demand',
+        icon: `${ICONS}/movie.png`,
+        // Folders can be loaded lazily (e.g. from an API); a Promise is supported.
+        items: () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () => resolve(['Trailer', 'Gameplay', 'Credits'].map((label) => ({ label, icon: `${ICONS}/movie.png` }))),
+              600
+            )
+          ),
+      },
+    ],
   },
   {
     id: 'game',
