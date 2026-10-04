@@ -1,97 +1,103 @@
+/* App shell: fonts, background layers, boot sequence and status bar.
+   The XMB itself is styled by src/engine/xmb.css. */
+
 @font-face {
   font-family: 'CustomFont';
   src: url('assets/fonts/font.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'ps3-logo';
-  src: url('assets/fonts/logo-font.otf') format('truetype');
+  src: url('assets/fonts/logo-font.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
 }
 
 body {
-  font-family: 'CustomFont', sans-serif;
   margin: 0;
-  padding: 0;
   overflow: hidden;
-
+  background: #000;
+  font-family: 'CustomFont', sans-serif;
   user-select: none;
-
   -webkit-user-select: none;
-
-  -moz-user-select: none;
-
-  -ms-user-select: none;
-
   cursor: default;
 }
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Background layers ---------- */
+
 #bg {
-  display: block;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: -1;
-  /* background-image: url('assets/The-Last-of-Us-Remastered_upscayl_2x_upscayl-standard-4x.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: brightness(0.5); */
-}
-
-#bg-cover {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
+  display: block;
   width: 100%;
   height: 100%;
+}
+
+#bg.is-unsupported {
+  background: linear-gradient(135deg, #731a1a, #b33333 50%, #cc4d80);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
   z-index: 0;
-  opacity: 1;
-  background-image: url(/assets/tlou-cover.webp);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
 }
 
-.bg-cover-fade-in {
-  animation-name: bg-cover-fade;
-  animation-duration: 1s;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
+.backdrop.is-visible {
+  opacity: 1;
 }
 
-@keyframes bg-cover-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* ---------- Start screen ---------- */
+
+.start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .ps3-button {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centrar horizontalmente */
-  justify-content: center; /* Centrar verticalmente */
-
-  width: 150px; /* Ancho típico para un ícono de menú */
+  align-items: center;
+  justify-content: center;
+  width: 150px;
   height: 150px;
   padding: 10px;
-  margin: 10px;
+  border: 0;
   border-radius: 8px;
-
-  /* Fondo y estética XMB */
   background: linear-gradient(to bottom, #101010, #000000);
-  text-decoration: none; /* Quitar el subrayado de los enlaces */
+  box-shadow: 0 0 10px rgba(180, 78, 78, 0.7), inset 0 1px 3px rgba(209, 5, 5, 0.1);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
 
-  /* Efecto Neón Azul */
-  box-shadow: 0 0 10px rgba(180, 78, 78, 0.7),
-    inset 0 1px 3px rgba(209, 5, 5, 0.1);
+.ps3-button:hover,
+.ps3-button:focus-visible {
+  outline: none;
+  background: linear-gradient(to bottom, #202020, #000000);
+  box-shadow: 0 0 20px rgb(216, 91, 89), inset 0 1px 5px rgba(233, 4, 4, 0.2);
+  transform: scale(1.05);
+}
+
+.ps3-button:active {
+  transform: scale(1);
+  box-shadow: 0 0 5px rgba(158, 51, 51, 0.5), inset 0 1px 5px rgba(204, 71, 71, 0.5);
 }
 
 .ps3-icon {
@@ -103,55 +109,97 @@ body {
 
 .button-text {
   margin-top: 8px;
-  color: #ffffff;
-  font-family: 'Arial', sans-serif;
+  color: #fff;
+  font-family: Arial, sans-serif;
   font-size: 14px;
-  text-transform: uppercase;
   font-weight: bold;
+  text-transform: uppercase;
 }
 
-.ps3-button:hover {
-  background: linear-gradient(to bottom, #202020, #000000);
+/* ---------- Boot splash ---------- */
 
-  box-shadow: 0 0 20px rgb(216, 91, 89), inset 0 1px 5px rgba(233, 4, 4, 0.2);
-  transform: scale(1.05);
+.splash {
+  --boot-duration: 10s;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #000;
+  opacity: 0.8;
 }
 
-.ps3-button:active {
-  transform: scale(1);
-  box-shadow: 0 0 5px rgba(158, 51, 51, 0.5),
-    inset 0 1px 5px rgba(204, 71, 71, 0.5);
+.splash.is-playing {
+  animation: splash-fade-out var(--boot-duration) ease-in-out forwards;
 }
 
-.ps3-status-bar {
-  padding: 2px;
+.splash__logo {
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+.splash.is-playing .splash__logo {
+  animation: fade-in calc(var(--boot-duration) * 0.4) ease-in-out forwards;
+}
+
+.ps3-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: 'ps3-logo', sans-serif;
+  font-size: 4em;
+}
+
+.ps3-logo-icon {
+  width: 70px;
+  height: 70px;
+  padding-bottom: 10px;
+  filter: invert(1);
+}
+
+.ps3-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+}
+
+/* ---------- XMB mount point ---------- */
+
+.xmb-root:not(:empty) {
+  animation: fade-in 2s ease-in-out;
+}
+
+/* ---------- Status bar ---------- */
+
+.status-bar {
   position: fixed;
   top: 5%;
   right: 0;
-  width: 30dvw;
-  height: 7dvh;
-  background-color: rgb(0, 0, 0, 0.2);
-  opacity: 0.8;
-  border: white 1px solid;
-  box-shadow: inset 0 0 1px white, 0 0 2px white, 0 0 2px white, 0 0 2px white;
-
-  display: none;
-  border-top-left-radius: 0.2rem;
-  border-bottom-left-radius: 0.2rem;
+  z-index: 10;
+  display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
-  transition: opacity 2s ease-out;
-  animation-duration: 2s;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
+  width: 30dvw;
+  height: 7dvh;
+  padding: 2px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid #fff;
+  border-right: 0;
+  border-radius: 0.2rem 0 0 0.2rem;
+  box-shadow: inset 0 0 1px #fff, 0 0 2px #fff;
+  opacity: 0.8;
+  animation: fade-in-status 2s ease-in-out;
 }
+
 .clock-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: white;
-  font-family: 'CustomFont', sans-serif;
+  color: #fff;
 }
 
 .clock {
@@ -159,336 +207,74 @@ body {
   height: 30px;
 }
 
-.clock-face {
+.clock__face {
   fill: none;
-  stroke: rgba(255, 255, 255);
+  stroke: #fff;
   stroke-width: 10;
 }
 
-#line,
-#hourHand,
-#minuteHand {
-  stroke: white;
+.clock__hand {
+  stroke: #fff;
   stroke-linecap: round;
-}
-
-#hourHand {
   stroke-width: 9;
 }
 
-#minuteHand {
-  stroke-width: 9;
+.clock__hand--second {
+  stroke-width: 3;
 }
 
-.clock-center {
-  fill: white;
+.clock__center {
+  fill: #fff;
 }
 
-#start-screen {
+/* ---------- Debug overlay ---------- */
+
+.debug-overlay {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 20;
   width: 100%;
-  height: 100%;
-  background-color: #000;
-  opacity: 0.8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-.ps3-logo-position {
-  position: absolute;
-  top: 50%;
-  left: 80%;
-  transform: translate(-50%, -50%);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  opacity: 0;
-}
-.ps3-logo-icon {
-  padding-bottom: 10px;
-  width: 70px;
-  height: 70px;
-  /* invertir color */
-  filter: invert(1);
-}
-.ps3-logo-text {
-  display: flex;
-  align-items: center;
-  gap: 0.6em;
-
-  font-family: 'ps3-logo', sans-serif;
-  font-size: 4em;
-}
-.ps3-text {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1em;
-}
-.slidefromleft {
-  /* Propiedades de la animación: */
-  animation-name: slideFromLeft; /* Nombre de la animación (@keyframes) */
-  animation-duration: 4s; /* Duración total de la animación: 1.5 segundos */
-  animation-timing-function: ease-in-out; /* Velocidad: inicia rápido y se desacelera al final */
-  animation-fill-mode: forwards; /* Mantiene el estado final (100%) al terminar */
-}
-@keyframes slideFromLeft {
-  /* Estado Inicial: 0% de la duración de la animación */
-  0% {
-    opacity: 0;
-  }
-
-  /* Estado Final: 100% de la duración de la animación */
-  100% {
-    opacity: 1;
-  }
-}
-#page-overlay {
-  /* Cubre toda la ventana de navegación (viewport) */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background-color: #000000;
-
-  z-index: 9999;
-
-  opacity: 0.8;
-
-  transition: opacity 10s ease-out;
-  animation-duration: 10s;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
-}
-.fade-out {
-  animation-name: fade-out;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.4);
+  font-family: monospace;
 }
 
-.fade-in {
-  animation-name: fade-in;
+.debug-overlay p {
+  margin: 0.2rem 0.6rem;
 }
 
-@keyframes fade-out {
-  from {
-    opacity: 0.8;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
+/* ---------- Shared animations ---------- */
 
 @keyframes fade-in {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
 }
 
-.main-container {
-  height: 100vh;
-  display: none;
-
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #fff;
-  padding: 0 20px;
-  transition: opacity 2s ease-out;
-  animation-duration: 2s;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
-}
-
-.menu-container {
-  position: absolute;
-  top: 15vh;
-  left: 12vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-}
-
-.menu-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 0;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 170px;
-  height: 600px;
-  transition: transform 0.2s ease-in;
-}
-
-.menu-item-header {
-  position: absolute;
-  top: 10%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.menu-item-icon {
-  width: 100px;
-  height: 100px;
-  opacity: 0.5;
-  transition: transform 0.4s ease, opacity 0.3s ease;
-  animation-play-state: paused;
-}
-
-.menu-item-description {
-  display: none;
-}
-
-.sub-menu-item-icon {
-  display: flex;
-  width: 100px;
-  height: 100px;
-  opacity: 0.5;
-  transition: transform 0.4s ease;
-  padding-left: 10px;
-}
-
-.sub-menu-item-header {
-  transition: transform 0.4s ease;
-  animation-play-state: paused;
-  opacity: 0.5;
-  /* margin-left: 50px;
-     */
-}
-
-.sub-menu-item-container {
-  position: absolute;
-  /* QUITAMOS 'display: none' y usamos opacidad y transformación */
-  display: flex; /* Se mantiene en el DOM, pero invisible y desplazado */
-  left: 10%;
-  top: 30%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  /* ESTADO INICIAL OCULTO CON TRASLACIÓN HORIZONTAL Y OPACIDAD 0 */
-  opacity: 0;
-  transform: translateX(-50px); /* Oculto y movido 50px a la izquierda */
-  transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* Transición para el contenedor */
-}
-
-/* ... Tu código anterior ... */
-
-.sub-menu-item {
-  display: flex;
-  flex-grow: 0;
-  flex-shrink: 0;
-  align-items: center;
-  width: 400px;
-  height: 120px;
-  margin: 5px;
-
-  /* TRASLACIÓN ADICIONAL PARA CADA SUB-MENÚ */
-  transform: translateX(-20px);
-  transition: transform 300ms ease-in, opacity 300ms ease-in; /* Añadida transición de opacidad */
-  opacity: 0; /* Inicialmente ocultos */
-}
-
-/* Active Menu Item */
-
-.active-menu-item {
-} /* Just for mark active menu item*/
-
-.active-menu-item .sub-menu-item-container {
-  /* ESTADO VISIBLE: Vuelve a la posición normal y aparece */
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.active-menu-item .sub-menu-item {
-  /* Estado visible para los elementos internos */
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* OPCIONAL: Añadir un retraso escalonado para los sub-menú items */
-.active-menu-item .sub-menu-item:nth-child(1) {
-  transition-delay: 0.1s;
-}
-.active-menu-item .sub-menu-item:nth-child(2) {
-  transition-delay: 0.2s;
-}
-.active-menu-item .sub-menu-item:nth-child(3) {
-  transition-delay: 0.3s;
-}
-
-.active-menu-item .menu-item-icon {
-  opacity: 1;
-  /* transform: scale(1.2); */
-}
-
-.active-menu-item .menu-item-description {
-  display: block;
-}
-
-.active-menu-item .sub-menu-item-container {
-  display: flex;
-}
-/* END - Active Menu Item*/
-
-/* Active Sub Menu Item*/
-
-.active-sub-menu-item {
-} /* Just for mark active sub menu item*/
-
-.active-sub-menu-item .sub-menu-item-icon {
-  opacity: 1;
-  /* transform: scale(1.5); */
-}
-
-.active-sub-menu-item .sub-menu-item-header {
-  animation: signal 2s infinite;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-play-state: running;
-  opacity: 1;
-}
-/* END - Active Sub Menu Item*/
-
-/* STATUS BAR */
-
-.status-bar {
-  display: none;
-  position: fixed;
-  width: 100%;
-  color: white;
-  padding: 0;
-  margin: 0;
-  z-index: 1;
-}
-
-.bg-status {
-  background-color: black;
-  opacity: 0.4;
-}
-
-/* END - STATUS BAR */
-@keyframes signal {
-  0%,
-  100% {
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0), 0 0 10px rgba(0, 191, 255, 0),
-      0 0 20px rgba(0, 191, 255, 0);
+@keyframes fade-in-status {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 0.8;
+  }
+}
 
-  50% {
-    text-shadow: 0 0 4px rgba(255, 255, 255, 1), 0 0 10px rgba(255, 255, 255, 1),
-      0 0 20px rgba(255, 255, 255, 0.8);
+@keyframes splash-fade-out {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock__hand--second {
+    display: none;
   }
 }

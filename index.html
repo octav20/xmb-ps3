@@ -5,213 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XMB-PS3</title>
+    <link rel="stylesheet" href="src/engine/xmb.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="shortcut icon" href="assets/icons/logotipo-de-playstation.png" type="image/x-icon">
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
 </head>
 
 <body>
-    <div id="start-screen">
-        <a id="start-button" href="#" class="ps3-button">
-            <img src="assets/icons/logotipo-de-playstation.png" alt="Icono de PlayStation 3" class="ps3-icon">
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+
+    <div id="start-screen" class="start-screen">
+        <button id="start-button" class="ps3-button" type="button">
+            <img src="assets/icons/logotipo-de-playstation.png" alt="" class="ps3-icon">
             <span class="button-text">START</span>
-        </a>
+        </button>
     </div>
-    <div id="page-overlay">
-        <!-- PS3  text-->
-        <div id="ps3-logo1" class="ps3-logo-position">
 
+    <div id="splash" class="splash" hidden>
+        <div class="splash__logo">
             <div class="ps3-logo-text">
-                <img class="ps3-logo-icon" src="/assets/icons/logotipo-de-playstation.png" alt="">
-
+                <img class="ps3-logo-icon" src="assets/icons/logotipo-de-playstation.png" alt="">
                 PS3
-
             </div>
-            <span class="ps3-text">
-                PlayStation&#174; 3
-            </span>
-        </div>
-
-    </div>
-    <canvas id="bg"></canvas>
-    <div id="bg-cover"></div>
-
-    <div class="status-bar bg-status">
-        <p>
-            Active menu item index: <span id="active-menu-item-index-display"></span>
-        </p>
-        <p>
-            Active sub menu item index: <span id="active-sub-menu-item-index-display"></span>
-        </p>
-    </div>
-    <div class="ps3-status-bar">
-
-        <div class="clock-wrapper">
-            <div class="clock-wrapper">
-                <span id="timeText"></span>
-
-                <svg class="clock" viewBox="0 0 100 100">
-                    <!-- Borde -->
-                    <circle cx="50" cy="50" r="45" class="clock-face" />
-
-                    <!-- Manecillas -->
-                    <line id="hourHand" x1="50" y1="50" x2="50" y2="20" />
-                    <line id="minuteHand" x1="50" y1="50" x2="50" y2="10" />
-
-                    <!-- Centro -->
-                    <circle cx="50" cy="50" r="2.5" class="clock-center" />
-                </svg>
-
-            </div>
-
-
-        </div>
-
-    </div>
-    <div id="main-content" class="main-container">
-
-        <div class="menu-container">
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/menu_quickmenu.png"></img>
-                    <div class="menu-item-description">Home</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_quickmenu.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/setting.png"></img>
-                    <div class="menu-item-description">Settings</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_user.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/screenshot.png"></img>
-                    <div class="menu-item-description">Photo</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_user.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/music.png"></img>
-                    <div class="menu-item-description">Music</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_user.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/movie.png"></img>
-                    <div class="menu-item-description">Video</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_user.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/default.png"></img>
-                    <div class="menu-item-description">Games</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item game">
-                        <img class="game sub-menu-item-icon" src="assets/icons/ps3-disc-icon.png" />
-                        <div class="sub-menu-item-header">The Last of US</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/wifi.png"></img>
-                    <div class="menu-item-description">Network</div>
-                </div>
-                <div class="sub-menu-item-container">
-                    <div class="sub-menu-item">
-                        <img class="sub-menu-item-icon" src="assets/icons/menu_user.png" />
-                        <div class="sub-menu-item-header">Test</div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-header">
-                    <img class="menu-item-icon" src="assets/icons/Icons.9.png"></img>
-                    <div class="menu-item-description">Friends</div>
-                </div>
-            </div>
+            <span class="ps3-text">PlayStation&#174; 3</span>
         </div>
     </div>
 
+    <header id="status-bar" class="status-bar" hidden>
+        <div id="clock" class="clock-wrapper"></div>
+    </header>
 
+    <div id="debug-overlay" class="debug-overlay" hidden></div>
+
+    <main id="xmb" class="xmb-root"></main>
+
+    <script type="module" src="src/app/main.js"></script>
 </body>
-<script type="module" src="main.js"></script>
 
 </html>

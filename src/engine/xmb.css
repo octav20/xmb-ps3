@@ -1,0 +1,274 @@
+/*
+ * XMB engine styles.
+ * All geometry is expressed through custom properties so a host app can
+ * re-skin or re-scale the menu by overriding them on `.xmb` (or any ancestor).
+ * JS only sets `--xmb-category` on the root and `--rel` / `--depth` on items.
+ */
+
+.xmb {
+  --xmb-cat-w: clamp(104px, 10.5vw, 180px);
+  --xmb-cat-icon: clamp(60px, 6vw, 100px);
+  --xmb-label-h: 2rem;
+  --xmb-header-h: calc(var(--xmb-cat-icon) + var(--xmb-label-h));
+  --xmb-item-h: clamp(68px, 11vh, 120px);
+  --xmb-item-icon: clamp(54px, 5.6vw, 96px);
+  --xmb-focus-gap: calc(var(--xmb-item-h) * 0.25);
+  --xmb-row-top: 26vh;
+  --xmb-row-left: 16vw;
+  --xmb-color: #fff;
+  --xmb-dim: 0.5;
+  --xmb-glow: rgba(255, 255, 255, 0.9);
+  --xmb-duration: 240ms;
+  --xmb-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --xmb-stagger: 40ms;
+
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  color: var(--xmb-color);
+  pointer-events: none;
+}
+
+/* ---------- Horizontal category row ---------- */
+
+.xmb__track {
+  position: absolute;
+  top: var(--xmb-row-top);
+  left: var(--xmb-row-left);
+  display: flex;
+  transform: translateX(calc(var(--xmb-cat-w) * var(--xmb-category, 0) * -1));
+  transition: transform var(--xmb-duration) var(--xmb-ease), opacity var(--xmb-duration) ease;
+}
+
+.xmb-category {
+  position: relative;
+  flex: 0 0 var(--xmb-cat-w);
+}
+
+.xmb-category__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: var(--xmb-header-h);
+}
+
+.xmb-category__icon {
+  display: block;
+  width: var(--xmb-cat-icon);
+  height: var(--xmb-cat-icon);
+  object-fit: contain;
+  opacity: var(--xmb-dim);
+  transform: scale(0.85);
+  transition: transform var(--xmb-duration) var(--xmb-ease), opacity var(--xmb-duration) ease;
+}
+
+.xmb-category__label {
+  line-height: var(--xmb-label-h);
+  font-size: clamp(0.85rem, 1.1vw, 1.15rem);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--xmb-duration) ease;
+}
+
+.xmb-category.is-active .xmb-category__icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.xmb-category.is-active .xmb-category__label {
+  opacity: 1;
+}
+
+/* ---------- Vertical item column ---------- */
+
+.xmb-category__items {
+  position: absolute;
+  top: var(--xmb-header-h);
+  left: calc(50% - var(--xmb-item-icon) / 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-2rem);
+  transition: opacity var(--xmb-duration) ease, transform var(--xmb-duration) var(--xmb-ease),
+    visibility 0s linear var(--xmb-duration);
+}
+
+.xmb-category.is-active .xmb-category__items {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  transition-delay: 0s;
+}
+
+.xmb-item {
+  --rel: 0;
+  --depth: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.4vw, 1.5rem);
+  height: var(--xmb-item-h);
+  width: max-content;
+  opacity: 0;
+  transform: translateY(calc(var(--rel) * var(--xmb-item-h)));
+  transition: transform var(--xmb-duration) var(--xmb-ease),
+    opacity var(--xmb-duration) ease calc(min(var(--depth), 5) * var(--xmb-stagger));
+}
+
+.xmb-item.is-after {
+  transform: translateY(calc(var(--rel) * var(--xmb-item-h) + var(--xmb-focus-gap)));
+}
+
+.xmb-item.is-before {
+  transform: translateY(
+    calc(var(--rel) * var(--xmb-item-h) - var(--xmb-header-h) - var(--xmb-focus-gap))
+  );
+}
+
+.xmb-category.is-active .xmb-item {
+  opacity: 1;
+}
+
+.xmb-item__icon {
+  display: block;
+  flex: none;
+  width: var(--xmb-item-icon);
+  height: var(--xmb-item-icon);
+  object-fit: contain;
+  opacity: var(--xmb-dim);
+  transition: opacity var(--xmb-duration) ease;
+}
+
+.xmb-item__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.xmb-item__label {
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  white-space: nowrap;
+  opacity: var(--xmb-dim);
+  transition: opacity var(--xmb-duration) ease;
+}
+
+.xmb-item__description {
+  font-size: clamp(0.75rem, 0.95vw, 0.95rem);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--xmb-duration) ease;
+}
+
+.xmb-item.is-focused .xmb-item__icon,
+.xmb-item.is-focused .xmb-item__label {
+  opacity: 1;
+}
+
+.xmb-item.is-focused .xmb-item__label {
+  animation: xmb-signal 2s linear infinite;
+}
+
+.xmb-item.is-focused .xmb-item__description {
+  opacity: 0.85;
+}
+
+/* Settled item with a `focusIcon` (e.g. a game logo replacing the disc). */
+.xmb-item.is-featured .xmb-item__icon {
+  width: auto;
+  max-width: 40vw;
+  padding-inline: clamp(1rem, 3vw, 3rem);
+  animation: xmb-fade-in 600ms ease;
+}
+
+/* ---------- Options panel (secondary list) ---------- */
+
+.xmb-options {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  width: min(34vw, 440px);
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.7));
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  transform: translateX(100%);
+  transition: transform var(--xmb-duration) var(--xmb-ease);
+}
+
+.xmb.has-options .xmb-options {
+  transform: translateX(0);
+}
+
+.xmb.has-options .xmb__track {
+  opacity: 0.45;
+}
+
+.xmb-options__list {
+  width: 100%;
+  margin: 0;
+  padding: 0 2rem;
+  list-style: none;
+}
+
+.xmb-option {
+  position: relative;
+  padding: 0.7rem 0 0.7rem 1.6rem;
+  font-size: clamp(0.95rem, 1.3vw, 1.3rem);
+  opacity: var(--xmb-dim);
+}
+
+.xmb-option.is-selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateY(-50%);
+}
+
+.xmb-option.is-focused {
+  opacity: 1;
+  animation: xmb-signal 2s linear infinite;
+}
+
+/* ---------- Animations ---------- */
+
+@keyframes xmb-signal {
+  0%,
+  100% {
+    text-shadow: 0 0 4px transparent, 0 0 10px transparent, 0 0 20px transparent;
+  }
+  50% {
+    text-shadow: 0 0 4px var(--xmb-glow), 0 0 10px var(--xmb-glow), 0 0 20px var(--xmb-glow);
+  }
+}
+
+@keyframes xmb-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xmb {
+    --xmb-duration: 0ms;
+    --xmb-stagger: 0ms;
+  }
+
+  .xmb-item.is-focused .xmb-item__label,
+  .xmb-option.is-focused,
+  .xmb-item.is-featured .xmb-item__icon {
+    animation: none;
+  }
+}
